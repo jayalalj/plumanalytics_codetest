@@ -72,6 +72,40 @@ public class TestMetricPublisher implements MetricPublisher {
 		public String toString() {
 			return count1 + "\t" + count2 + "\t" + count3;
 		}
-	}
 
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + count1;
+			result = prime * result + count2;
+			result = prime * result + count3;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			CountInstance other = (CountInstance) obj;
+			if (count1 != other.count1)
+				return false;
+			if (count2 != other.count2)
+				return false;
+			if (count3 != other.count3)
+				return false;
+			return true;
+		}
+
+		private TestMetricPublisher getOuterType() {
+			return TestMetricPublisher.this;
+		}
+		
+		
+		
+	}
+	
 }
