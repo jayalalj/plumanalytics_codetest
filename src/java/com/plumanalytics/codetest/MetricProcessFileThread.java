@@ -4,14 +4,18 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
 
 public class MetricProcessFileThread implements Runnable {
 	File sourceFile;
 	MetricPublisher publisher;
+	BlockingQueue<MetricMessage> blockingQueue;
 
-	MetricProcessFileThread(File sourceFile, MetricPublisher publisher) {
+	MetricProcessFileThread(File sourceFile, MetricPublisher publisher, BlockingQueue<MetricMessage> blockingQueue) {
 		this.sourceFile = sourceFile;
 		this.publisher = publisher;
+		this.blockingQueue = blockingQueue;
 	}
 
 	@Override
@@ -24,7 +28,8 @@ public class MetricProcessFileThread implements Runnable {
 			while ((line = reader.readLine()) != null) {
 				try {
 					MetricMessage message = publisher.createMessage(line);
-					publisher.publishMetric(message);
+					blockingQueue.put(message);
+					//publisher.publishMetric(message);
 				} catch (Throwable e) {
 					throw new RuntimeException(	"Unable to parse date from row in file: " + sourceFile.getAbsolutePath() + " - " + line,e);
 				}

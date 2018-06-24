@@ -13,7 +13,7 @@ public class Application {
 		Map<Date, Map<String, CountInstance>> dateMapCurr = null, dateMapPrev = null;
 		Map<String, CountInstance> countMapByIdCurr = null, countMapByIdPrv = null;
 		try {
-			for (int i = 0; i < 2000 ; i++) {
+			for (int i = 0; i < 3 ; i++) {
 				URL url = MetricProcessor.class.getResource("/test-data");
 				File testDataDir = new File(url.toURI());
 				MetricProcessor processor = new MetricProcessor(testDataDir);
@@ -23,9 +23,9 @@ public class Application {
 				countMapByIdPrv = countMapByIdCurr;
 				countMapByIdCurr = processor.publisher.getAggregateCountMapById();
 				if (i > 0) {
-					System.out.println("--validating validateConsistancyDateMap -- ");
+					System.out.println("--validating validateConsistancyDateMap -- "+dateMapCurr.size());
 					validateConsistancyDateMap(dateMapCurr, dateMapPrev);
-					System.out.println("--validating validateCountInstMap -- ");
+					System.out.println("--validating validateCountInstMap -- "+countMapByIdCurr.size());
 					validateCountInstMap(countMapByIdCurr, countMapByIdPrv);
 				}
 			}
