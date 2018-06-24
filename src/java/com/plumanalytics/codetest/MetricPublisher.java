@@ -13,7 +13,7 @@ public interface MetricPublisher {
 
   public MetricMessage createMessage(String line) throws ParseException;
   public void publishMetric(MetricMessage metricMessage);
-  public Map<Date, Map<String, CountInstance>> getMetricMapByDate();
-  public Map<String, CountInstance> getAggregateCountMapById();
+  public default Map<Date, Map<String, CountInstance>> getMetricMapByDate(){ throw new RuntimeException("Not supported");}
+  public default Map<String, CountInstance> getAggregateCountMapById(){ throw new RuntimeException("Not supported");};
 
 }

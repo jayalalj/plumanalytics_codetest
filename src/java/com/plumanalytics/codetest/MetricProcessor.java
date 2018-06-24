@@ -15,9 +15,6 @@ public class MetricProcessor {
 
 	private File sourceDir;
 	MetricPublisher publisher = new TestMetricPublisher();
-	MetricPublisher producer = new MericMessageProducer();
-
-	
 
 	protected MetricProcessor(File sourceDir) {
 		this.sourceDir = sourceDir;
@@ -51,35 +48,5 @@ public class MetricProcessor {
 		//comment map printing, with sysouts cannot loop enough to test.
 		//System.out.println(this.publisher);
 	}
-
-	/*public class ProcessFileThread implements Runnable {
-		File sourceFile;
-
-		ProcessFileThread(File sourceFile) {
-			this.sourceFile = sourceFile;
-		}
-
-		@Override
-		public void run() {
-			// System.out.println(Thread.currentThread().getId() + " -
-			// Processing file: " + sourceFile.getName());
-			try {
-				BufferedReader reader = new BufferedReader(new FileReader(sourceFile));
-				String line = null;
-				while ((line = reader.readLine()) != null) {
-					try {
-						MetricMessage message = producer.createMessage(line);
-						publisher.publishMetric(message);
-					} catch (Throwable e) {
-						throw new RuntimeException(
-								"Unable to parse date from row in file: " + sourceFile.getAbsolutePath() + " - " + line,e);
-					}
-				}
-				reader.close();
-			} catch (IOException e) {
-				throw new RuntimeException("Failed to process file: " + sourceFile.getAbsolutePath(), e);
-			}
-		}
-	}*/
 
 }

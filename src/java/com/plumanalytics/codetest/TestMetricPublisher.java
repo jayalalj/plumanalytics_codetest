@@ -12,8 +12,8 @@ import com.plumanalytics.codetest.TestMetricPublisher.CountInstance;
  */
 public class TestMetricPublisher implements MetricPublisher {
 
-	Map<Date, Map<String, CountInstance>> metricMapByDate = new HashMap<Date, Map<String, CountInstance>>();
-	Map<String, CountInstance> aggregateCountMapById = new HashMap<String, CountInstance>();
+	private Map<Date, Map<String, CountInstance>> metricMapByDate = new HashMap<Date, Map<String, CountInstance>>();
+	private Map<String, CountInstance> aggregateCountMapById = new HashMap<String, CountInstance>();
 
 	public Map<Date, Map<String, CountInstance>> getMetricMapByDate() {
 		return metricMapByDate;
@@ -76,6 +76,7 @@ public class TestMetricPublisher implements MetricPublisher {
 		return asString.toString();
 	}
 
+	
 	class CountInstance {
 		int count1;
 		int count2;

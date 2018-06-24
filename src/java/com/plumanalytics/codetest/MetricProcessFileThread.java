@@ -26,8 +26,7 @@ public class MetricProcessFileThread implements Runnable {
 					MetricMessage message = publisher.createMessage(line);
 					publisher.publishMetric(message);
 				} catch (Throwable e) {
-					throw new RuntimeException(
-							"Unable to parse date from row in file: " + sourceFile.getAbsolutePath() + " - " + line,e);
+					throw new RuntimeException(	"Unable to parse date from row in file: " + sourceFile.getAbsolutePath() + " - " + line,e);
 				}
 			}
 			reader.close();

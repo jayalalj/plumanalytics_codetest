@@ -13,7 +13,7 @@ public class Application {
 		Map<Date, Map<String, CountInstance>> dateMapCurr = null, dateMapPrev = null;
 		Map<String, CountInstance> countMapByIdCurr = null, countMapByIdPrv = null;
 		try {
-			for (int i = 0; i < 20 ; i++) {
+			for (int i = 0; i < 2000 ; i++) {
 				URL url = MetricProcessor.class.getResource("/test-data");
 				File testDataDir = new File(url.toURI());
 				MetricProcessor processor = new MetricProcessor(testDataDir);
