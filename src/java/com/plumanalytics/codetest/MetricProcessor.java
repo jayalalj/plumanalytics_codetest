@@ -131,8 +131,9 @@ public class MetricProcessor {
 				String line = null;
 				while ((line = reader.readLine()) != null) {
 					try {
-						synchronized (publisher) {
+						
 							MetricMessage message = publisher.createMessage(line);
+						synchronized (publisher) {
 							publisher.publishMetric(message);
 						}
 					} catch (Throwable e) {
