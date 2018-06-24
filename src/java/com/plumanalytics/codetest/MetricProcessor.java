@@ -25,7 +25,9 @@ public class MetricProcessor {
       processor.run();
     } catch (Throwable e) {
       e.printStackTrace();
+      return;
     }
+    System.out.println("!!--code executed without exception---!!");
   }
 
   private MetricProcessor(File sourceDir) {
