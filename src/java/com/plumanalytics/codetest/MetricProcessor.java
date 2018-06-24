@@ -25,7 +25,7 @@ public class MetricProcessor {
 		Map<Date, Map<String, CountInstance>> dateMapCurr = null, dateMapPrev = null;
 		Map<String, CountInstance> countMapByIdCurr = null, countMapByIdPrv = null;
 		try {
-			for (int i = 0; i < 200; i++) {
+			for (int i = 0; i < 2000 ; i++) {
 				URL url = MetricProcessor.class.getResource("/test-data");
 				File testDataDir = new File(url.toURI());
 				MetricProcessor processor = new MetricProcessor(testDataDir);
@@ -89,17 +89,15 @@ public class MetricProcessor {
 
 	protected void processFilesMultiThreaded(List<File> fileList) throws InterruptedException {
 		LinkedBlockingQueue<Runnable> workQueueu = new LinkedBlockingQueue<Runnable>(5);
-		ThreadPoolExecutor threadPool = new ThreadPoolExecutor(10, 10, 5000L, TimeUnit.MILLISECONDS, workQueueu,
-				new ThreadPoolExecutor.CallerRunsPolicy());
+		ThreadPoolExecutor threadPool = new ThreadPoolExecutor(10, 10, 5000L, TimeUnit.MILLISECONDS, workQueueu, new ThreadPoolExecutor.CallerRunsPolicy());
 		for (File oneFile : fileList) {
 			threadPool.execute(new ProcessFileThread(oneFile));
 		}
 		threadPool.shutdown();
 		while (!threadPool.awaitTermination(1000, TimeUnit.MILLISECONDS)) {
-			System.out.println("Waiting for queue to complete. QueueSize=" + workQueueu.size() + " ActiveThreads="
-					+ threadPool.getActiveCount());
+			System.out.println("Waiting for queue to complete. QueueSize=" + workQueueu.size() + " ActiveThreads="+ threadPool.getActiveCount());
 		}
-		//System.out.println("File list processing complete.");
+		// System.out.println("File list processing complete.");
 	}
 
 	protected List<File> listFiles() {
@@ -113,7 +111,7 @@ public class MetricProcessor {
 
 	public void run() throws InterruptedException {
 		processFilesMultiThreaded(listFiles());
-		//System.out.println(this.publisher);
+		System.out.println(this.publisher);
 	}
 
 	private class ProcessFileThread implements Runnable {
@@ -125,19 +123,18 @@ public class MetricProcessor {
 
 		@Override
 		public void run() {
-			//System.out.println(Thread.currentThread().getId() + " - Processing file: " + sourceFile.getName());
+			// System.out.println(Thread.currentThread().getId() + " -
+			// Processing file: " + sourceFile.getName());
 			try {
 				BufferedReader reader = new BufferedReader(new FileReader(sourceFile));
 				String line = null;
 				while ((line = reader.readLine()) != null) {
 					try {
-						
-							MetricMessage message = publisher.createMessage(line);
-						synchronized (publisher) {
-							publisher.publishMetric(message);
-						}
+						MetricMessage message = publisher.createMessage(line);
+						publisher.publishMetric(message);
 					} catch (Throwable e) {
-						throw new RuntimeException(	"Unable to parse date from row in file: " + sourceFile.getAbsolutePath() + " - " + line,e);
+						throw new RuntimeException(
+								"Unable to parse date from row in file: " + sourceFile.getAbsolutePath() + " - " + line,e);
 					}
 				}
 				reader.close();

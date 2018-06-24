@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.plumanalytics.codetest.TestMetricPublisher.CountInstance;
+
 /**
  * Used to publish metrics from test files
  */
@@ -23,25 +25,41 @@ public class TestMetricPublisher implements MetricPublisher {
 
 	@Override
 	public void publishMetric(MetricMessage message) {
+		// message is per thread, per line
 		TestMetricMessage metricMessage = (TestMetricMessage) message;
-		Map<String, CountInstance> oneMetric = metricMapByDate.get(metricMessage.getMetricDate());
-		if (oneMetric == null) {
-			oneMetric = new HashMap<String, CountInstance>();
-			metricMapByDate.put(metricMessage.getMetricDate(), oneMetric);
+		// multiple message can have same date, risk of replacing, this is a
+		// critical section
+		Map<String, CountInstance> oneMetric;
+		synchronized (metricMapByDate) {
+			oneMetric = metricMapByDate.get(metricMessage.getMetricDate());
+			if (oneMetric == null) {
+				oneMetric = new HashMap<String, CountInstance>();
+				metricMapByDate.put(metricMessage.getMetricDate(), oneMetric);
+			}
 		}
+
+		//Message id for given date is unique, no overstepping here
 		CountInstance countInstance = oneMetric.get(metricMessage.getId());
 		if (countInstance == null) {
 			countInstance = new CountInstance();
 			oneMetric.put(metricMessage.getId(), countInstance);
 		}
+        
 		countInstance.addCounts(metricMessage.getCount1(), metricMessage.getCount2(), metricMessage.getCount3());
 
-		CountInstance aggrCountInstance = aggregateCountMapById.get(metricMessage.getId());
-		if (aggrCountInstance == null) {
-			aggrCountInstance = new CountInstance();
-			aggregateCountMapById.put(metricMessage.getId(), aggrCountInstance);
+		//Id is unique only within date, no dt groping, again critical section
+		CountInstance aggrCountInstance ;
+		synchronized (aggregateCountMapById) {
+			 aggrCountInstance = aggregateCountMapById.get(metricMessage.getId());
+
+			if (aggrCountInstance == null) {
+				aggrCountInstance = new CountInstance();
+				aggregateCountMapById.put(metricMessage.getId(), aggrCountInstance);
+
+			}
 		}
-		aggrCountInstance.addCounts(metricMessage.getCount1(), metricMessage.getCount2(), metricMessage.getCount3());
+
+		aggrCountInstance.addCounts(metricMessage.getCount1(), metricMessage.getCount2(),	metricMessage.getCount3());
 	}
 
 	public MetricMessage createMessage(String line) throws ParseException {
@@ -63,7 +81,7 @@ public class TestMetricPublisher implements MetricPublisher {
 		int count2;
 		int count3;
 
-		void addCounts(int count1, int count2, int count3) {
+		synchronized void addCounts(int count1, int count2, int count3) {
 			this.count1 += count1;
 			this.count2 += count2;
 			this.count3 += count3;
