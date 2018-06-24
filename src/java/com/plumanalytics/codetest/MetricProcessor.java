@@ -111,7 +111,8 @@ public class MetricProcessor {
 
 	public void run() throws InterruptedException {
 		processFilesMultiThreaded(listFiles());
-		System.out.println(this.publisher);
+		//comment map printing, with sysouts cannot loop enough to test.
+		//System.out.println(this.publisher);
 	}
 
 	private class ProcessFileThread implements Runnable {
