@@ -1,17 +1,12 @@
 package com.plumanalytics.codetest;
 
-import java.io.*;
-import java.net.URL;
-import java.text.SimpleDateFormat;
+import java.io.File;
+import java.io.FileFilter;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import com.plumanalytics.codetest.TestMetricPublisher.CountInstance;
 
 /**
  * Process metric files using a thread pool
@@ -20,6 +15,7 @@ public class MetricProcessor {
 
 	private File sourceDir;
 	MetricPublisher publisher = new TestMetricPublisher();
+	MetricPublisher producer = new MericMessageProducer();
 
 	
 
@@ -32,7 +28,7 @@ public class MetricProcessor {
 		LinkedBlockingQueue<Runnable> workQueueu = new LinkedBlockingQueue<Runnable>(5);
 		ThreadPoolExecutor threadPool = new ThreadPoolExecutor(10, 10, 5000L, TimeUnit.MILLISECONDS, workQueueu, new ThreadPoolExecutor.CallerRunsPolicy());
 		for (File oneFile : fileList) {
-			threadPool.execute(new ProcessFileThread(oneFile));
+			threadPool.execute(new MetricProcessFileThread(oneFile, publisher));
 		}
 		threadPool.shutdown();
 		while (!threadPool.awaitTermination(1000, TimeUnit.MILLISECONDS)) {
@@ -56,7 +52,7 @@ public class MetricProcessor {
 		//System.out.println(this.publisher);
 	}
 
-	private class ProcessFileThread implements Runnable {
+	/*public class ProcessFileThread implements Runnable {
 		File sourceFile;
 
 		ProcessFileThread(File sourceFile) {
@@ -72,7 +68,7 @@ public class MetricProcessor {
 				String line = null;
 				while ((line = reader.readLine()) != null) {
 					try {
-						MetricMessage message = publisher.createMessage(line);
+						MetricMessage message = producer.createMessage(line);
 						publisher.publishMetric(message);
 					} catch (Throwable e) {
 						throw new RuntimeException(
@@ -84,6 +80,6 @@ public class MetricProcessor {
 				throw new RuntimeException("Failed to process file: " + sourceFile.getAbsolutePath(), e);
 			}
 		}
-	}
+	}*/
 
 }
