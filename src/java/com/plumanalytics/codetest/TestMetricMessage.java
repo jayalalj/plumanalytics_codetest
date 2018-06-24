@@ -9,7 +9,7 @@ import java.util.Date;
  */
 public class TestMetricMessage implements MetricMessage {
   //SimpleDateFormat is not thread safe and giving issues when a static member
-  private SimpleDateFormat METRIC_DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
+  // private SimpleDateFormat METRIC_DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
 
   private String id;
   private Date metricDate;
@@ -20,6 +20,7 @@ public class TestMetricMessage implements MetricMessage {
   @Override
   public void init(String line) throws ParseException {
     String [] split = line.split("\\t");
+    SimpleDateFormat METRIC_DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
     metricDate = METRIC_DATE_FORMAT.parse(split[0]);
     id = split[1];
     count1 = Integer.parseInt(split[2]);
