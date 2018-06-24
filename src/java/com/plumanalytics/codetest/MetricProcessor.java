@@ -14,12 +14,17 @@ import java.util.concurrent.TimeUnit;
 public class MetricProcessor {
 
 	private File sourceDir;
-	MetricPublisher publisher = new TestMetricPublisher();
+	private MetricPublisher publisher = new TestMetricPublisher();
 
 	protected MetricProcessor(File sourceDir) {
 		this.sourceDir = sourceDir;
 
 	}
+
+	public MetricPublisher getPublisher() {
+		return publisher;
+	}
+
 
 	protected void processFilesMultiThreaded(List<File> fileList) throws InterruptedException {
 		LinkedBlockingQueue<Runnable> workQueueu = new LinkedBlockingQueue<Runnable>(5);

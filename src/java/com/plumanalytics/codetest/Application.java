@@ -13,15 +13,19 @@ public class Application {
 		Map<Date, Map<String, CountInstance>> dateMapCurr = null, dateMapPrev = null;
 		Map<String, CountInstance> countMapByIdCurr = null, countMapByIdPrv = null;
 		try {
+			//loop over given time and execute metric message processing.
+			//in each iteration compare processed values stored in MetricProcessor class maps with previous ran values.
 			for (int i = 0; i < 2000 ; i++) {
 				URL url = MetricProcessor.class.getResource("/test-data");
 				File testDataDir = new File(url.toURI());
 				MetricProcessor processor = new MetricProcessor(testDataDir);
 				processor.run();
+				
+				//testing for consistency
 				dateMapPrev = dateMapCurr;
-				dateMapCurr = processor.publisher.getMetricMapByDate();
+				dateMapCurr = processor.getPublisher().getMetricMapByDate();
 				countMapByIdPrv = countMapByIdCurr;
-				countMapByIdCurr = processor.publisher.getAggregateCountMapById();
+				countMapByIdCurr = processor.getPublisher().getAggregateCountMapById();
 				if (i > 0) {
 					System.out.println("--validating validateConsistancyDateMap -- ");
 					validateConsistancyDateMap(dateMapCurr, dateMapPrev);
@@ -58,14 +62,14 @@ public class Application {
 			Map<String, CountInstance> prvInstMap) {
 		for (String key : curInstMap.keySet()) {
 			if (!prvInstMap.containsKey(key)) {
-				System.out.println("broken, Incetance map keys not mached");
-				throw new RuntimeException("broken, Incetance map keys not mached");
+				System.out.println("broken, Instance map keys not mached");
+				throw new RuntimeException("broken, Instance map keys not mached");
 			}
 			if (!prvInstMap.get(key).equals(curInstMap.get(key))) {
-				System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%    broken, Incetance map values not match-----" + key);
+				System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%    broken, Instance map values not match-----" + key);
 				System.out.println(prvInstMap.get(key).toString());
 				System.out.println(curInstMap.get(key).toString());
-				throw new RuntimeException("broken, Incetance map values not match-----" + key);
+				throw new RuntimeException("broken, Instance map values not match-----" + key);
 			}
 		}
 	}

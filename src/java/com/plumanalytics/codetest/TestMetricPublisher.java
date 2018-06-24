@@ -27,8 +27,7 @@ public class TestMetricPublisher implements MetricPublisher {
 	public void publishMetric(MetricMessage message) {
 		// message is per thread, per line
 		TestMetricMessage metricMessage = (TestMetricMessage) message;
-		// multiple message can have same date, risk of replacing, this is a
-		// critical section
+		// multiple message can have same date, risk of replacing, this is acritical section
 		Map<String, CountInstance> oneMetric;
 		synchronized (metricMapByDate) {
 			oneMetric = metricMapByDate.get(metricMessage.getMetricDate());

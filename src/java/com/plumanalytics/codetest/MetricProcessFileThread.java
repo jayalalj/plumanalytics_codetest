@@ -6,8 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class MetricProcessFileThread implements Runnable {
-	File sourceFile;
-	MetricPublisher publisher;
+	private File sourceFile;
+	private MetricPublisher publisher;
 
 	MetricProcessFileThread(File sourceFile, MetricPublisher publisher) {
 		this.sourceFile = sourceFile;
@@ -16,8 +16,6 @@ public class MetricProcessFileThread implements Runnable {
 
 	@Override
 	public void run() {
-		// System.out.println(Thread.currentThread().getId() + " -
-		// Processing file: " + sourceFile.getName());
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(sourceFile));
 			String line = null;
